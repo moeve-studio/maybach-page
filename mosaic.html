@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Friesenhaus Muhle · Maybachstraße 26 · Sylt</title>
+<meta name="description" content="Reetgedecktes Friesenhaus auf 1.338 m² Gartengrundstück, im Zentrum Westerlands. Privatverkauf.">
+<meta property="og:title" content="Friesenhaus Muhle — Maybachstraße 26, Sylt">
+<meta property="og:image" content="images/ext-hero-pathway.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="design-system/colors_and_type.css">
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: var(--color-warm-white);
+    color: var(--color-navy-dark);
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--color-sand); }
+  ::-webkit-scrollbar-thumb { background: var(--color-stone); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-stone-mid); }
+
+  /* Bento grid */
+  .mosaic-grid {
+    /* Tiles can grow on hover; ensure z-index lift works */
+    isolation: isolate;
+  }
+  .mosaic-cell {
+    /* Make sure tiles fill their grid-row slot exactly */
+    height: 100%;
+  }
+  .mosaic-cell > * {
+    width: 100%; height: 100%;
+  }
+
+  /* Tile lifts on hover */
+  .mosaic-cell:has(.mosaic-tile.is-hovered) {
+    z-index: 5;
+  }
+
+  /* Tablet: 3 columns (re-using container-query rows, just narrower) */
+  @media (max-width: 1100px) {
+    .mosaic-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+      grid-auto-rows: 0.333cqw !important;
+    }
+    /* span 4 → span 3 (full width on 3-col) */
+    .mosaic-cell[data-span="4"] { grid-column: span 3 !important; }
+  }
+
+  /* Mobile: stack vertically, drop grid-rows, use aspect-ratio per tile */
+  @media (max-width: 720px) {
+    .mosaic-grid {
+      display: block !important;
+      container-type: normal !important;
+    }
+    .mosaic-cell {
+      grid-column: auto !important;
+      grid-row: auto !important;
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: var(--cell-ar) !important;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .mosaic-bottom-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
+  }
+
+  /* Print */
+  @media print {
+    header, #inquiry { display: none !important; }
+    .mosaic-cell { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel" src="components-mosaic.jsx"></script>
+
+<script type="text/babel">
+ReactDOM.createRoot(document.getElementById('root')).render(<MosaicApp />);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Friesenhaus Muhle · Maybachstraße 26 · Sylt</title>
+<meta name="description" content="Freistehendes Einfamilienhaus auf Sylt, ca. 213 m² Wohnfläche, 1.338 m² Grundstück, reetgedeckt — mit Erweiterungsplanung. Privatverkauf in Bestlage von Westerland.">
+<meta property="og:title" content="Friesenhaus Muhle — Maybachstraße 26, Sylt">
+<meta property="og:description" content="Reetgedeckt, in Bestlage. Erweiterungsplanung vorhanden.">
+<meta property="og:image" content="images/ext-hero-pathway.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="design-system/colors_and_type.css">
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: var(--bg-page);
+    color: var(--fg-primary);
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--color-sand); }
+  ::-webkit-scrollbar-thumb { background: var(--color-stone); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-stone-mid); }
+
+  /* Scroll-reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.9s cubic-bezier(.2,.7,.2,1), transform 0.9s cubic-bezier(.2,.7,.2,1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Hero scroll indicator */
+  .hero-scroll-line {
+    width: 1px; height: 56px; background: rgba(255,255,255,0.35);
+    margin: 10px 0 0 auto;
+    animation: heroLine 2.4s ease-in-out infinite;
+    transform-origin: top;
+  }
+  @keyframes heroLine {
+    0%, 100% { transform: scaleY(1); opacity: 0.35; }
+    50%      { transform: scaleY(0.55) translateY(8px); opacity: 1; }
+  }
+
+  /* Gallery hover */
+  .gallery-tile:hover img { transform: scale(1.04); }
+  .gallery-tile:hover .gallery-cap { opacity: 1; }
+
+  /* Mobile responsive */
+  @media (max-width: 820px) {
+    nav ul { display: none !important; }
+    section .grid-stack {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Print */
+  @media print {
+    nav, .tweaks-panel { display: none !important; }
+    section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body data-theme="navy">
+
+<div id="root"></div>
+
+<script type="text/babel" src="components-editorial.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<script type="text/babel">
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "lang": "de",
+  "heroImg": "images/ext-hero-pathway.jpg",
+  "density": "spacious"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [lang, setLang] = React.useState(t.lang || 'de');
+
+  React.useEffect(() => { setLang(t.lang || 'de'); }, [t.lang]);
+  React.useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
+  // Reveal-on-scroll
+  React.useEffect(() => {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -80px 0px' });
+
+    const scan = () => {
+      document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => io.observe(el));
+    };
+    scan();
+    const id = setTimeout(scan, 500);
+    return () => { io.disconnect(); clearTimeout(id); };
+  }, [lang]);
+
+  const goInquire = () => {
+    const el = document.getElementById('anfrage');
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 40;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  };
+
+  const setLangPersist = (l) => {
+    setLang(l);
+    setTweak('lang', l);
+  };
+
+  return (
+    <>
+      <Nav lang={lang} setLang={setLangPersist} onInquire={goInquire} />
+      <Hero lang={lang} heroImg={t.heroImg} onInquire={goInquire} />
+
+      <div className="reveal"><Intro lang={lang} /></div>
+      <div className="reveal"><Steckbrief lang={lang} /></div>
+      <div className="reveal"><Lage lang={lang} /></div>
+      <div className="reveal"><Beschreibung lang={lang} /></div>
+      <div className="reveal"><Gallery lang={lang} /></div>
+      <div className="reveal"><Grundrisse lang={lang} /></div>
+      <div className="reveal"><Bauweise lang={lang} /></div>
+      <div className="reveal"><Anfrage lang={lang} /></div>
+
+      <Footer lang={lang} />
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Sprache / Language">
+          <TweakRadio
+            value={lang}
+            onChange={v => setLangPersist(v)}
+            options={[
+              { value: 'de', label: 'Deutsch' },
+              { value: 'en', label: 'English' },
+            ]}
+          />
+        </TweakSection>
+
+        <TweakSection label="Hero-Bild">
+          <TweakSelect
+            value={t.heroImg}
+            onChange={v => setTweak('heroImg', v)}
+            options={[
+              { value: 'images/ext-hero-pathway.jpg', label: 'Pfad zum Haus (Weitwinkel)' },
+              { value: 'images/ext-rear-wide.jpg',   label: 'Rückseite (Wintergarten)' },
+              { value: 'images/ext-name-front.jpg',  label: 'Vorderseite' },
+              { value: 'images/ext-front-gable.jpg', label: 'Giebel mit Rosen' },
+              { value: 'images/ext-side-terrace.jpg',label: 'Terrasse' },
+            ]}
+          />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+</body>
+</html>
