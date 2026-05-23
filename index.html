@@ -6,7 +6,6 @@
 <title>Friesenhaus Muhle · Maybachstraße 26 · Sylt</title>
 <meta name="description" content="Reetgedecktes Friesenhaus auf 1.338 m² Gartengrundstück, im Zentrum Westerlands. Privatverkauf.">
 <meta property="og:title" content="Friesenhaus Muhle — Maybachstraße 26, Sylt">
-<meta property="og:description" content="Reetgedeckt. 213 m² Wohnfläche, 1.338 m² Grundstück, in Bestlage.">
 <meta property="og:image" content="images/ext-hero-pathway.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,16 +17,10 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
 <style>
-  :root {
-    --bg-cinema: #050505;
-    --bg-credits: #0c0e14;
-    --fg-credits: #f4ede0;
-  }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
-    background: var(--bg-cinema);
-    color: #fff;
+    background: var(--color-warm-white);
+    color: var(--color-navy-dark);
     scroll-behavior: smooth;
   }
   body {
@@ -36,45 +29,61 @@
     overflow-x: hidden;
   }
   ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #050505; }
-  ::-webkit-scrollbar-thumb { background: #1a1a1a; }
-  ::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
+  ::-webkit-scrollbar-track { background: var(--color-sand); }
+  ::-webkit-scrollbar-thumb { background: var(--color-stone); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-stone-mid); }
 
-  /* Letterbox bars — fixed, fade out when credits show */
-  .letterbox {
-    position: fixed; left: 0; right: 0;
-    height: 3.5vh; min-height: 24px; max-height: 60px;
-    background: #050505;
-    z-index: 70;
-    pointer-events: none;
-    transition: opacity 0.6s ease, transform 0.6s ease;
+  /* Bento grid */
+  .mosaic-grid {
+    /* Tiles can grow on hover; ensure z-index lift works */
+    isolation: isolate;
   }
-  .letterbox-top    { top: 0; }
-  .letterbox-bottom { bottom: 0; }
-  body.no-letterbox .letterbox-top    { opacity: 0; transform: translateY(-100%); }
-  body.no-letterbox .letterbox-bottom { opacity: 0; transform: translateY(100%); }
-
-  /* First-frame scroll cue */
-  .cinema-scroll-line {
-    width: 1px; height: 56px; background: rgba(255,255,255,0.4);
-    margin: 10px 0 0 auto;
-    animation: cinemaLine 2.6s ease-in-out infinite;
-    transform-origin: top;
+  .mosaic-cell {
+    /* Make sure tiles fill their grid-row slot exactly */
+    height: 100%;
   }
-  @keyframes cinemaLine {
-    0%, 100% { transform: scaleY(1);    opacity: 0.4; }
-    50%      { transform: scaleY(0.55) translateY(8px); opacity: 1; }
+  .mosaic-cell > * {
+    width: 100%; height: 100%;
   }
 
-  /* Credits responsive */
-  @media (max-width: 820px) {
-    .credits-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
+  /* Tile lifts on hover */
+  .mosaic-cell:has(.mosaic-tile.is-hovered) {
+    z-index: 5;
+  }
+
+  /* Tablet: 3 columns (re-using container-query rows, just narrower) */
+  @media (max-width: 1100px) {
+    .mosaic-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+      grid-auto-rows: 0.333cqw !important;
+    }
+    /* span 4 → span 3 (full width on 3-col) */
+    .mosaic-cell[data-span="4"] { grid-column: span 3 !important; }
+  }
+
+  /* Mobile: stack vertically, drop grid-rows, use aspect-ratio per tile */
+  @media (max-width: 720px) {
+    .mosaic-grid {
+      display: block !important;
+      container-type: normal !important;
+    }
+    .mosaic-cell {
+      grid-column: auto !important;
+      grid-row: auto !important;
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: var(--cell-ar) !important;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .mosaic-bottom-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
   }
 
   /* Print */
   @media print {
-    .letterbox, nav { display: none !important; }
-    section { break-inside: avoid; }
+    header, #inquiry { display: none !important; }
+    .mosaic-cell { break-inside: avoid; }
   }
 </style>
 </head>
@@ -82,27 +91,10 @@
 
 <div id="root"></div>
 
-<script type="text/babel" src="components-cinema.jsx"></script>
+<script type="text/babel" src="components-mosaic.jsx"></script>
 
 <script type="text/babel">
-
-function Root() {
-  // Toggle letterbox bars when entering the credits section
-  React.useEffect(() => {
-    const credits = document.getElementById('credits');
-    if (!credits) return;
-    const io = new IntersectionObserver(([entry]) => {
-      document.body.classList.toggle('no-letterbox', entry.isIntersecting);
-    }, { threshold: 0.05 });
-    io.observe(credits);
-    return () => io.disconnect();
-  }, []);
-
-  return <CinemaApp />;
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<Root />);
-
+ReactDOM.createRoot(document.getElementById('root')).render(<MosaicApp />);
 </script>
 
 </body>

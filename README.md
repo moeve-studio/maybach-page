@@ -4,31 +4,19 @@ Steckbrief zum Anwesen Maybachstraße 26, 25980 Westerland (Sylt) — als Web-Pa
 
 ## Inhalt
 
-- `index.html` — Hauptseite (DE/EN umschaltbar)
-- `components.jsx` — React-Komponenten (Nav, Hero, Steckbrief, Lage, Räume, Galerie, Grundrisse, Bauweise, Anfrage, Footer)
-- `tweaks-panel.jsx` — Dev-Panel zum Umschalten von Sprache/Hero-Bild
+- `index.html` — Hauptseite (Mosaik-Layout, DE/EN umschaltbar)
+- `components-mosaic.jsx` — React-Komponenten (Nav, Hero, Mosaik-Galerie, Steckbrief, Lage, Räume, Grundrisse, Bauweise, Anfrage, Footer)
+- `tweaks-panel.jsx` — Dev-Panel zum Umschalten von Sprache/Layout
 - `design-system/colors_and_type.css` — Design-Tokens (Farben, Typografie, Spacing)
 - `images/` — Außen-, Innen- und Gartenfotos
-- `grundrisse/` — Grundriss-PDFs (EG, OG)
-
-## Auf GitHub Pages veröffentlichen
-
-1. Neues Repository anlegen.
-2. Alle Dateien außer `uploads/` pushen:
-   ```bash
-   git init
-   git add index.html components.jsx tweaks-panel.jsx design-system/ images/ grundrisse/ README.md
-   git commit -m "Initial"
-   git branch -M main
-   git remote add origin git@github.com:<dein-user>/<repo>.git
-   git push -u origin main
-   ```
-3. Im Repository unter **Settings → Pages**:
-   - Source: `Deploy from a branch`
-   - Branch: `main` / `(root)`
-   - Save.
-4. Nach ca. 1 Minute liegt die Seite unter `https://<dein-user>.github.io/<repo>/`.
+- `grundrisse/` — Grundriss-PDFs und -JPGs (EG, OG)
 
 ## Inhalt redaktionell anpassen
 
-Änderungen an Texten und Eckdaten erfolgen in `components.jsx` im `I18N`-Block, an Fotos im `GALLERY`-Array, an den Grundrissen in der `Grundrisse`-Komponente.
+Änderungen an Texten und Eckdaten erfolgen in `components-mosaic.jsx` im `I18N`-Block, an Fotos im `GALLERY`-Array, an den Grundrissen in der `Grundrisse`-Komponente.
+
+## Auf GitHub Pages veröffentlicht
+
+Live unter: `https://moeve-studio.github.io/maybach-page/`
+
+Deployment erfolgt automatisch nach jedem Push auf den `main`-Branch via GitHub Actions (`.github/workflows/pages.yml`).
